@@ -1,2 +1,2 @@
 # packia
-a simple web development boilerplate using: nodejs, express, backbone, gulp and bower.
+a simple web development boilerplate using: nodejs, express, backbone, gulp and browserify.
