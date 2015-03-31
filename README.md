@@ -1,6 +1,16 @@
 # packia
 a simple web development boilerplate using: nodejs, express, backbone, gulp and browserify.
 
+### features
+* enables a easy to use workflow for your project
+* transpiles ES6 files with babel to ES5
+* transpiles SCSS files with sass to CSS
+* automatically only transpiles files which are changed
+* automatically reloads the browser if a change happens to a client file
+
+### usage
+just run `gulp` inside the directory to let it do it's job.
+
 ### files and dirs
 `src` contains the source code of the whole application. `target` contains the transpiled and minified code.
 
@@ -11,5 +21,5 @@ all css files in the `src` directory can be written in SCSS and get transpiled t
 files into the target folder.
 
 ### modules
-packia uses models via CommonJS on the clientside and backend. `src/client/js/app.js` is the entry point for the clientside
-and `src/server/app.js` for the backend.
+packia uses models via CommonJS on the clientside and backend. `src/client/js/client.js` is the entry point for the clientside
+and `src/server/server.js` for the backend.

@@ -18,7 +18,7 @@ Backbone.$ = $;
 var router = require('./various/Router');
 
 // check jquery
-$('.jqueryCheck').text('jQuery is loaded and works');
+$('.jqueryCheck').text('jQuery works.');
 
 // start backbone history
 Backbone.history.start();
