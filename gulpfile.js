@@ -14,64 +14,72 @@ var plumber = require('gulp-plumber');
 var browserify   = require('browserify');
 var source = require('vinyl-source-stream');
 var sourcemaps = require('gulp-sourcemaps');
+var livereload = require('gulp-livereload');
+var autoprefixer = require('gulp-autoprefixer');
 
 // source paths
 var sourcePaths = {
 	client: {
+		img: [
+			'src/client/imgs/**/*.png',
+			'src/client/imgs/**/*.jpg',
+			'src/client/imgs/**/*.ico'
+		],
 		css: 'src/client/css/**/*.scss',
 		js: 'src/client/js/**/*.js'
 	},
+	config: 'src/config/**/*.json',
 	server: {
-		js: 'src/server/**/*.js'
+		js: 'src/server/**/*.js',
+		views: 'src/server/**/*.jade'
 	}
 };
 
 // destination paths
 var destPaths = {
 	client: {
+		img: 'target/client/imgs',
 		css: 'target/client/css',
 		js: 'target/client/js',
 		jsTargets: ['target/client/js/**/*.js', '!target/client/js/client.js'],
-		entryPoint: './target/client/js/app.js',
+		entryPoint: './target/client/js/client.js',
 		browserifyTarget: 'target/client/js'
 	},
+	config: 'target/config',
 	server: {
-		js: 'target/server'
+		js: 'target/server',
+		views: 'target/server'
 	}
 };
 
 // tasks
 gulp.task('transpileClientCSS', function () {
-	watch(sourcePaths.client.css, function(){
-	    gulp.src(sourcePaths.client.css)
-	    .pipe(plumber())
-	    .pipe(newer(destPaths.client.css))
-	    .pipe(sass({errLogToConsole: true}))
-	    .pipe(gulp.dest(destPaths.client.css))
-	    .pipe(notify('transpiled client scss files'));
-	});
+	gulp.src(sourcePaths.client.css)
+	.pipe(watch(sourcePaths.client.css))
+	.pipe(plumber())
+	.pipe(sass({errLogToConsole: true}))
+	.pipe(autoprefixer())
+	.pipe(gulp.dest(destPaths.client.css))
+	.pipe(notify('transpiled client scss files'))
+	.pipe(livereload());
 });
 
 gulp.task('transpileClientJS', function(){
-	watch(sourcePaths.client.js, function(){
-	    gulp.src(sourcePaths.client.js)
-	    .pipe(plumber())
-	    .pipe(newer(destPaths.client.js))
-	    .pipe(babel())
-	    .pipe(gulp.dest(destPaths.client.js))
-	    .pipe(notify('transpiled client js6 files'));
-	});
+	gulp.src(sourcePaths.client.js)
+	.pipe(watch(sourcePaths.client.js))
+	.pipe(plumber())
+	.pipe(babel())
+	.pipe(gulp.dest(destPaths.client.js))
+	.pipe(notify('transpiled client js6 files'));
 });
 
 gulp.task('transpileServerJS', function(){
-	watch(sourcePaths.server.js, function(){
-		gulp.src(sourcePaths.server.js)
-		.pipe(plumber())
-		.pipe(newer(destPaths.server.js))
-		.pipe(babel())
-		.pipe(gulp.dest(destPaths.server.js))
-		.pipe(notify('transpiled server js6 files'));
-	});
+	gulp.src(sourcePaths.server.js)
+	.pipe(watch(sourcePaths.server.js))
+	.pipe(plumber())
+	.pipe(babel())
+	.pipe(gulp.dest(destPaths.server.js))
+	.pipe(notify('transpiled server js6 files'));
 });
 
 // browserify gets a little more complicated
@@ -90,14 +98,48 @@ function bundle(){
 	.pipe(uglify())
 	*/
 	.pipe(gulp.dest(destPaths.client.browserifyTarget))
+	.pipe(livereload())
 	.pipe(notify('browserified client js files'));
 }
 
 gulp.task('browserifyClientJS', bundle);
 
-gulp.task('watch', function(){
+// simple copy tasks
+gulp.task('copyConfig', function(){
+	gulp.src(sourcePaths.config)
+	.pipe(watch(sourcePaths.config))
+	.pipe(gulp.dest(destPaths.config))
+	.pipe(notify('copied config files to target'));
+});
 
+gulp.task('copyJadeViews', function(){
+	gulp.src(sourcePaths.server.views)
+	.pipe(watch(sourcePaths.server.views))
+	.pipe(gulp.dest(destPaths.server.views))
+	.pipe(notify('copied jade views files to target'))
+	.pipe(livereload());
+});
+
+gulp.task('copyImages', function(){
+	gulp.src(sourcePaths.client.img)
+	.pipe(watch(sourcePaths.client.img))
+	.pipe(gulp.dest(destPaths.client.img))
+	.pipe(notify('copied image files to target'))
+	.pipe(livereload());
+});
+
+gulp.task('livereload', function(){
+	livereload.listen({start: true});
 });
 
 // default: watch over source directories and compile files in case of changes
-gulp.task('default', ['watch', 'transpileClientCSS', 'transpileClientJS', 'transpileServerJS', 'browserifyClientJS']);
+gulp.task('default', [
+	'livereload', 
+	'transpileClientCSS', 
+	'transpileClientJS', 
+	'transpileServerJS', 
+	'browserifyClientJS', 
+	'copyConfig', 
+	'copyJadeViews',
+	'copyImages'
+]);

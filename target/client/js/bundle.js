@@ -12,8 +12,17 @@ var $ = require("jquery");
 var _ = require("underscore");
 var Backbone = require("backbone");
 
+// set backbone's jquery reference
+Backbone.$ = $;
+
 // backbone
 var router = require("./various/Router");
+
+// check jquery
+$(".jqueryCheck").text("jQuery is loaded and works");
+
+// start backbone history
+Backbone.history.start();
 },{"./various/Router":6,"backbone":2,"jquery":4,"underscore":5}],2:[function(require,module,exports){
 //     Backbone.js 1.1.2
 
@@ -12377,4 +12386,18 @@ arguments[4][3][0].apply(exports,arguments)
 "use strict";
 
 var Backbone = require("backbone");
+
+// define routes of application here
+var Router = Backbone.Router.extend({
+	router: {
+		"": "home"
+	}
+});
+
+var router = new Router();
+
+// default home route
+router.on("route:home", function () {});
+
+module.exports = router;
 },{"backbone":2}]},{},[1]);
