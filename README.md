@@ -2,7 +2,7 @@
 a simple web development boilerplate using: nodejs, express, backbone, gulp and browserify.
 
 ### features
-* enables a easy to use workflow for your project
+* enables an easy to use workflow for your project
 * transpiles ES6 files with babel to ES5
 * transpiles SCSS files with sass to CSS
 * automatically only transpiles files which are changed
